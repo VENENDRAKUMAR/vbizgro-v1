@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Block sensitive or unused areas (if they exist)
+Disallow: /admin/
+Disallow: /server/
+Disallow: /private/
+
+# Sitemap location
+Sitemap: https://vbizgro.com/sitemap.xml
