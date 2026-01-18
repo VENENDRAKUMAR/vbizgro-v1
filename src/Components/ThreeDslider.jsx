@@ -1,142 +1,135 @@
 import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { FiGrid, FiLayers } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiGrid, FiLayers, FiArrowRight } from "react-icons/fi";
 
 export default function TiltedArcShowcase() {
   const [isGrid, setIsGrid] = useState(false);
 
   const images = [
-    "/images/work1.png",
-    "/images/work2.png",
-    "/images/ecoavenstalcd.png",
-    "/images/work3.png",
-    "/images/work5.png",
-    "/images/work6.png",
-    "/images/work7.png",
+    { src: "/images/work1.png", title: "Brand Identity", cat: "Luxury" },
+    { src: "/images/work2.png", title: "Digital Ecosystem", cat: "Web3" },
+    { src: "/images/ecoavenstalcd.png", title: "Eco Aven", cat: "Sustainable" },
+    { src: "/images/work3.png", title: "Neural Interface", cat: "AI Tech" },
+    { src: "/images/work5.png", title: "Minimalist Flow", cat: "UI/UX" },
+    { src: "/images/work6.png", title: "Meta Architecture", cat: "3D Design" },
+    { src: "/images/work7.png", title: "Global Expansion", cat: "Strategy" },
   ];
 
-  const rotations = [-24, -8, -4, 0, 4, 18, 24];
-  const offsets = [-180, -110, -55, 0, 55, 110, 180];
-  const scales = [0.85, 0.9, 0.95, 1.15, 0.95, 0.9, 0.85];
+  const rotations = [-22, -12, -6, 0, 6, 12, 22];
+  const offsets = [-450, -300, -150, 0, 150, 300, 450];
+  const scales = [0.8, 0.85, 0.95, 1.1, 0.95, 0.85, 0.8];
+  const zIndices = [10, 20, 30, 50, 30, 20, 10];
 
   return (
-    <section className="w-full min-h-screen flex flex-col items-center justify-center relative bg-white overflow-hidden">
-      {/* Centered icon toggle */}
-      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-50 flex items-center gap-3 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-full shadow">
+    <section className="w-full min-h-screen flex flex-col items-center justify-center relative bg-[#ffffff] overflow-hidden py-20">
+      
+      {/* 1. Cinematic Background Text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] select-none">
+        <h2 className="text-[25vw] font-black tracking-tighter  uppercase">Vbizgro</h2>
+      </div>
+
+      {/* 2. Professional View Toggle */}
+      <div className="absolute top-10 z-50 flex items-center gap-2 p-1.5 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-full">
         <button
           onClick={() => setIsGrid(false)}
-          aria-pressed={!isGrid}
-          aria-label="Arc view"
-          className={`p-2 rounded-full transition ${
-            !isGrid ? "bg-black text-white shadow-md" : "text-black/60 hover:text-black"
+          className={`px-6 py-2 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${
+            !isGrid ? "bg-black text-white shadow-[0_0_20px_rgba(255,255,255,0.3)]" : "text-white/40 hover:text-blue-500"
           }`}
         >
-          <FiLayers size={18} />
+          <FiLayers /> Arc Flow
         </button>
-
         <button
           onClick={() => setIsGrid(true)}
-          aria-pressed={isGrid}
-          aria-label="Grid view"
-          className={`p-2 rounded-full transition ${
-            isGrid ? "bg-black text-white shadow-md" : "text-black/60 hover:text-black"
+          className={`px-6 py-2 rounded-full flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${
+            isGrid ? "bg-blue-400 text-black shadow-[0_0_20px_rgba(255,255,255,0.3)]" : "text-white hover:text-white"
           }`}
         >
-          <FiGrid size={18} />
+          <FiGrid /> Grid View
         </button>
       </div>
 
-      {/* Showcase container centered */}
-      <div className="relative w-full max-w-7xl h-[85vh] flex items-center justify-center px-6">
-        {!isGrid ? (
-          /* ARC VIEW centered vertically and horizontally */
-          <div className="relative w-full h-full flex items-center justify-center pointer-events-none">
-            <div className="relative w-full h-full flex items-center justify-center">
-              {images.map((img, i) => (
+      {/* 3. Showcase Area */}
+      <div className="relative w-full h-[80vh] flex items-center justify-center pt-20">
+        <AnimatePresence mode="wait">
+          {!isGrid ? (
+            /* ARC VIEW: Cinematic Perspective */
+            <motion.div 
+              key="arc"
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="relative w-full h-full flex items-center justify-center"
+            >
+              {images.map((item, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 80 }}
+                  initial={{ opacity: 0, x: 0, rotateY: 45 }}
                   animate={{
                     opacity: 1,
-                    y: 0,
-                    rotate: rotations[i],
                     x: offsets[i],
+                    rotate: rotations[i],
+                    scale: scales[i],
+                    rotateY: rotations[i] * -1.5, // 3D Tilt Effect
                   }}
-                  transition={{
-                    duration: 0.9,
-                    delay: i * 0.08,
-                    ease: "easeOut",
-                  }}
-                  className="absolute flex items-end justify-center"
-                  style={{ zIndex: i === 3 ? 30 : 10 }}
+                  transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1], delay: i * 0.05 }}
+                  className="absolute cursor-pointer group"
+                  style={{ zIndex: zIndices[i], perspective: "2000px" }}
                 >
-                  <div
-                    className="relative rounded-2xl cursor-grab"
-                    style={{
-                      width: `${320 * scales[i]}px`,
-                      height: `${420 * scales[i]}px`,
-                      perspective: "1200px",
-                    }}
+                  <motion.div
+                    whileHover={{ y: -40, rotateY: 0, scale: 1.05 }}
+                    className="relative w-[280px] h-[400px] md:w-[320px] md:h-[450px] rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl"
                   >
-                    <motion.div
-                      drag
-                      whileTap={{ cursor: "grabbing" }}
-                      whileHover={{ scale: 1.02 }}
-                      className="w-full h-full relative"
-                      style={{ transformStyle: "preserve-3d" }}
-                    >
-                      {/* FRONT */}
-                      <div
-                        className="absolute inset-0 rounded-2xl overflow-hidden shadow-xl"
-                        style={{ backfaceVisibility: "hidden" }}
-                      >
-                        <img
-                          src={img}
-                          alt={`work-${i}`}
-                          className="w-full h-full object-cover select-none"
-                          loading="lazy"
-                        />
+                    <img
+                      src={item.src}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
+                    
+                    {/* Hover Info Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-8 flex flex-col justify-end">
+                      <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">{item.cat}</p>
+                      <h3 className="text-xl font-bold text-white tracking-tight">{item.title}</h3>
+                      <div className="mt-4 flex items-center gap-2 text-[10px] font-bold text-white uppercase tracking-tighter">
+                        View Case Study <FiArrowRight />
                       </div>
-
-                      {/* BACK */}
-                      <div
-                        className="absolute inset-0 rounded-2xl bg-black text-white flex items-center justify-center text-lg font-semibold"
-                        style={{
-                          transform: "rotateY(180deg)",
-                          backfaceVisibility: "hidden",
-                        }}
-                      >
-                        Details
-                      </div>
-                    </motion.div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            /* GRID VIEW: Brutalist Minimalist */
+            <motion.div
+              key="grid"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 max-w-7xl"
+            >
+              {images.map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  whileHover={{ y: -10 }}
+                  className="relative aspect-[4/5] rounded-3xl overflow-hidden group border border-white/5"
+                >
+                  <img src={item.src} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center p-6 text-center">
+                    <div>
+                      <h4 className="text-white font-bold uppercase tracking-widest text-xs">{item.title}</h4>
+                      <p className="text-white/40 text-[10px] mt-2 uppercase">{item.cat}</p>
+                    </div>
                   </div>
                 </motion.div>
               ))}
-            </div>
-          </div>
-        ) : (
-          /* GRID VIEW centered */
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.45 }}
-            className="grid grid-cols-3 gap-8 w-full max-w-5xl mx-auto"
-          >
-            {images.map((img, i) => (
-              <motion.div
-                key={i}
-                drag
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.6, delay: i * 0.04 }}
-                whileHover={{ scale: 1.03, rotate: 1.5 }}
-                className="relative rounded-2xl overflow-hidden shadow-lg cursor-grab"
-              >
-                <img src={img} alt={`grid-${i}`} className="w-full h-[220px] object-cover" loading="lazy" />
-              </motion.div>
-            ))}
-          </motion.div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* 4. Scroll Indicator */}
+      <div className="absolute bottom-10 flex flex-col items-center gap-4">
+        <span className="text-[9px] font-black text-white/20 uppercase tracking-[0.5em]">Explore Portfolio</span>
+        <div className="w-[1px] h-12 bg-gradient-to-b from-indigo-500 to-transparent" />
       </div>
     </section>
   );

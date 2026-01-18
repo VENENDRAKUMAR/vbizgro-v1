@@ -1,122 +1,173 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import Lenis from "lenis";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const portfolioItems = [
   {
     img: "/images/work1.png",
-    title: "Campaign Strategy",
-    desc: "Crafted multi-channel campaigns with measurable ROI. We blended creativity with analytics to deliver campaigns that inspire and convert.",
+    category: "Strategy",
+    title: "Campaign Architecture",
+    desc: "Multi-channel systems engineered for exponential ROI.",
   },
   {
     img: "/images/work2.png",
-    title: "Instagram Growth",
-    desc: "Scaled organic reach with reels and influencer collabs. Built community-driven engagement with modern storytelling.",
+    category: "Social",
+    title: "The Velocity Growth",
+    desc: "Organic scaling through narrative-driven reels.",
   },
   {
     img: "/images/work3.png",
-    title: "Creative Ads",
-    desc: "Designed high-converting ad creatives with A/B testing. Every pixel crafted to elevate brand presence.",
+    category: "Creative",
+    title: "High-Octane Ads",
+    desc: "Precision pixels designed to stop the scroll.",
   },
   {
     img: "/images/work4.png",
-    title: "Brand Storytelling",
-    desc: "Narratives that build emotional connection with audiences. Turning ideas into stories that resonate deeply.",
+    category: "Branding",
+    title: "Identity Systems",
+    desc: "Visual languages that command global authority.",
   },
   {
     img: "/images/work5.png",
-    title: "Content Funnel",
-    desc: "Optimized funnel with blogs, newsletters, and lead magnets. Driving conversions through strategic content.",
+    category: "Performance",
+    title: "Conversion Funnels",
+    desc: "Seamless journeys from attention to action.",
   },
   {
     img: "/images/work6.png",
-    title: "Analytics Dashboard",
-    desc: "Custom dashboards tracking KPIs and campaign health. Empowering brands with actionable insights.",
+    category: "Analytics",
+    title: "Precision Intelligence",
+    desc: "Data-driven dashboards for real-time leverage.",
   },
 ];
 
-export default function PortfolioSection() {
+export default function PortfolioElite() {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const lenis = new Lenis({ lerp: 0.1 });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Image Parallax Effect
+    gsap.utils.toArray(".portfolio-image").forEach((img) => {
+      gsap.to(img, {
+        yPercent: 15,
+        ease: "none",
+        scrollTrigger: {
+          trigger: img,
+          scrub: true,
+        },
+      });
+    });
+
+    return () => {
+      lenis.destroy();
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
+
   return (
-    <section className="relative w-full bg-white text-[#0f172a] overflow-hidden py-32">
-      {/* Decorative radial background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div
-          className="absolute left-1/2 top-12 transform -translate-x-1/2 w-[620px] h-[620px] rounded-full opacity-40 blur-3xl"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1605726135442-468dd2b7eff1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGdhcmRpbnQlMjBiYWNrZ3JvdW5kfGVufDB8fDB8fHww')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            mixBlendMode: "screen",
-          }}
-          aria-hidden
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-white via-blue-50 to-[#dbeafe] opacity-50" />
-      </div>
+    <section ref={containerRef} className="relative w-full py-40 bg-[#fdfcf9] overflow-hidden">
+      {/* Background Texture & Ambient Glow */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vh] bg-indigo-50/30 blur-[150px] rounded-full -z-10" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-4xl mx-auto text-center bg-white/95 backdrop-blur-sm rounded-2xl px-10 py-12 shadow-xl border border-white/60"
-        >
-          <h2 className="text-4xl md:text-5xl font-extrabold leading-tight text-gray-900">
-            Creative Execution That Delivers Growth.
-          </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-            Design, content, and campaigns crafted to elevate modern brands with cinematic polish.
-          </p>
-          <div
-            className="mt-6 h-1.5 w-40 mx-auto rounded-full"
-            style={{
-              background: "linear-gradient(90deg,#2563eb,#7c3aed)",
-            }}
-          />
-        </motion.div>
-
-        {/* Portfolio grid */}
-        <div className="mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
-          {portfolioItems.map((item, i) => (
-            <motion.article
-              key={i}
-              initial={{ opacity: 0, y: 40, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.7, delay: i * 0.1, ease: "easeOut" }}
-              className="group relative rounded-3xl overflow-hidden bg-white shadow-[0_18px_50px_rgba(15,23,42,0.08)] border border-white/60 hover:scale-[1.02] transition-transform duration-500"
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        
+        {/* Header Section (Minimal & Heavy) */}
+        <div className="mb-32 flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+          <div className="max-w-3xl">
+            <motion.span 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              className="text-indigo-600 font-bold tracking-[0.4em] uppercase text-[10px] mb-6 block"
             >
-              {/* image */}
-              <div className="h-[420px] w-full overflow-hidden relative">
+              Selected Works
+            </motion.span>
+            <h2 className="text-6xl md:text-9xl font-medium tracking-tighter leading-[0.8] text-[#1a1a1a]">
+              Crafting <br />
+              <span className="italic font-serif text-slate-300">The Future.</span>
+            </h2>
+          </div>
+          <p className="text-slate-500 text-lg max-w-sm font-light leading-relaxed">
+            Every project is a fusion of cinematic design and surgical strategy. We don't just create; we dominate.
+          </p>
+        </div>
+
+        {/* Portfolio Staggered Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-32">
+          {portfolioItems.map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className={`group cursor-none relative ${i % 2 !== 0 ? "md:mt-40" : ""}`}
+            >
+              {/* Image Container */}
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[60px] bg-[#f0eee6]">
                 <img
                   src={item.img}
                   alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="portfolio-image absolute inset-0 w-full h-full object-cover scale-125 transition-transform duration-700 group-hover:scale-[1.3]"
                 />
-                {/* hover overlay text */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
-                  <p className="text-base text-white leading-relaxed">{item.desc}</p>
+                
+                {/* Floating Category Tag */}
+                <div className="absolute top-8 left-8">
+                  <span className="px-6 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-white/20 text-[10px] font-bold text-white uppercase tracking-widest">
+                    {item.category}
+                  </span>
+                </div>
+
+                {/* Overlay on Hover */}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center">
+                   <div className="w-24 h-24 rounded-full bg-white flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-500">
+                      <span className="text-black font-black text-xs uppercase tracking-tighter">View</span>
+                   </div>
                 </div>
               </div>
-              {/* title area */}
-              <div className="p-8 bg-white/80">
-                <h3 className="text-xl font-semibold text-gray-900">{item.title}</h3>
+
+              {/* Title Area */}
+              <div className="mt-10 px-4">
+                <h3 className="text-3xl md:text-4xl font-bold tracking-tighter mb-4 text-[#1a1a1a]">
+                  {item.title}
+                </h3>
+                <p className="text-slate-500 text-base font-light max-w-sm leading-relaxed">
+                  {item.desc}
+                </p>
               </div>
-            </motion.article>
+            </motion.div>
           ))}
         </div>
 
-        {/* Footer info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
-          className="mt-16 flex items-center justify-between text-sm text-slate-500"
-        >
-      
-        </motion.div>
+        {/* Massive Call to Action */}
+        <div className="mt-60 text-center relative">
+          <h4 className="text-[12vw] font-black tracking-tighter text-black/5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none uppercase">
+            Your Project
+          </h4>
+          <div className="relative z-10">
+            <h3 className="text-4xl md:text-6xl font-medium tracking-tight mb-12">
+              Ready to start your <br /> <span className="italic font-serif text-indigo-600">Growth Engine?</span>
+            </h3>
+            <a 
+              href="https://wa.me/919752505639"
+              className="inline-flex items-center gap-6 px-12 py-6 bg-black text-white rounded-full text-xs font-bold uppercase tracking-[0.3em] hover:bg-indigo-600 transition-all duration-500 shadow-2xl"
+            >
+              Start Deployment
+              <span className="text-xl">→</span>
+            </a>
+          </div>
+        </div>
+
       </div>
     </section>
   );

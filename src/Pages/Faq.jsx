@@ -1,6 +1,7 @@
 // VBizGroFAQ.jsx
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { Plus } from "lucide-react";
 
 const faqs = [
   {
@@ -33,65 +34,65 @@ export default function VBizGroFAQ() {
   const [openIndex, setOpenIndex] = useState(null);
 
   return (
-    <section className="w-full bg-white py-20 px-6">
-      <div className="max-w-5xl mx-auto">
-
-        {/* Headline */}
-        <div className="mb-14 text-center">
-          <h2 className="text-4xl font-semibold text-gray-900 mb-3">
-            FAQs
+    <section className="w-full bg-white py-32 px-6">
+      <div className="max-w-4xl mx-auto">
+        
+        {/* Modern Headline */}
+        <div className="mb-20">
+          <motion.p 
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-indigo-600 font-black tracking-[0.4em] text-[10px] uppercase mb-4 text-center md:text-left"
+          >
+            Got Questions?
+          </motion.p>
+          <h2 className="text-5xl md:text-7xl font-medium tracking-tighter text-black leading-none text-center md:text-left">
+            ANSWERS <br />
+            <span className="italic font-light text-slate-300">FOR THE CURIOUS.</span>
           </h2>
-          <p className="text-gray-600 text-lg">
-            Answers that help you move forward with clarity and confidence.
-          </p>
         </div>
 
         {/* FAQ List */}
-        <div className="space-y-6">
+        <div className="divide-y divide-slate-100 border-t border-slate-100">
           {faqs.map((faq, i) => {
             const isOpen = openIndex === i;
 
             return (
               <div
                 key={i}
-                className="rounded-xl border border-blue-300/50 bg-white hover:border-pink-100 transition-all"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(255,192,203,0.18), rgba(255,255,255,1))",
-                }}
+                className="group py-8 transition-all duration-500"
               >
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
-                  className="w-full flex items-center justify-between px-6 py-5"
+                  className="w-full flex items-start justify-between text-left gap-8"
                 >
-                  {/* Pixel Hover Text */}
-                  <span className="text-lg font-medium text-gray-800 relative group">
-                    {faq.q}
+                  {/* Number & Question */}
+                  <div className="flex gap-6 md:gap-10">
+                    <span className="text-[10px] font-black text-slate-300 mt-2">
+                      0{i + 1}
+                    </span>
+                    <span className={`text-xl md:text-2xl font-bold tracking-tight transition-colors duration-300 ${isOpen ? "text-indigo-600" : "text-black group-hover:text-slate-500"}`}>
+                      {faq.q}
+                    </span>
+                  </div>
 
-                    {/* Pixel highlight effect */}
-                    <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
-                    <span className="absolute left-0 bottom-0 w-full h-0.5 bg-blue-300/40 group-hover:animate-pulse"></span>
-                  </span>
-
-                  <motion.span
-                    animate={{ rotate: isOpen ? 45 : 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="text-2xl text-gray-700"
-                  >
-                    +
-                  </motion.span>
+                  {/* Icon */}
+                  <div className={`mt-1 p-2 rounded-full transition-all duration-500 ${isOpen ? "bg-black text-white rotate-45" : "bg-slate-50 text-slate-400"}`}>
+                    <Plus size={18} />
+                  </div>
                 </button>
 
-                {/* Answer */}
+                {/* Answer with Framer Motion */}
                 <AnimatePresence>
                   {isOpen && (
                     <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.32 }}
+                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                      animate={{ opacity: 1, height: "auto", marginTop: 24 }}
+                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden"
                     >
-                      <div className="px-6 pb-5 text-gray-700 text-[15px] leading-relaxed">
+                      <div className="pl-14 md:pl-20 pr-10 text-slate-500 text-base md:text-lg leading-relaxed font-medium max-w-3xl">
                         {faq.a}
                       </div>
                     </motion.div>
@@ -101,6 +102,21 @@ export default function VBizGroFAQ() {
             );
           })}
         </div>
+
+        {/* Bottom CTA Area */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          className="mt-20 p-10 bg-slate-50 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-6"
+        >
+          <p className="text-sm font-bold text-black uppercase tracking-widest text-center md:text-left">
+            Still have questions? <br />
+            <span className="text-slate-400 font-medium normal-case">We’re here to help you 24/7.</span>
+          </p>
+          <a href="/contact" className="px-8 py-4 bg-black text-white text-[10px] font-black uppercase tracking-widest rounded-full hover:bg-indigo-600 transition-all active:scale-95">
+            Get in touch
+          </a>
+        </motion.div>
 
       </div>
     </section>

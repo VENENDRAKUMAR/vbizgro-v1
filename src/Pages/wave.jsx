@@ -6,8 +6,8 @@ const CanvasWaveLayer = () => {
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    
-    // Set canvas dimensions
+    let animationFrameId;
+
     const setCanvasSize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -15,71 +15,81 @@ const CanvasWaveLayer = () => {
     setCanvasSize();
     window.addEventListener('resize', setCanvasSize);
 
-    let mouseX = canvas.width / 2;
-    let mouseY = canvas.height / 2;
+    let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+    window.addEventListener("mousemove", (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
 
-    // Track mouse
-    const handleMouseMove = e => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-
-    // Lines data
-    const lines = Array.from({ length: 40 }, (_, i) => ({
-      y: i * 25,
-      offset: Math.random() * 200,
-      amplitude: 20 + Math.random() * 10,
-      speed: 0.002 + Math.random() * 0.002,
+    const lines = Array.from({ length: 12 }, (_, i) => ({
+      y: (canvas.height / 12) * i,
+      phase: Math.random() * Math.PI * 2,
+      amplitude: 40 + Math.random() * 60,
+      speed: 0.0005 + Math.random() * 0.001,
     }));
 
     function animate(time) {
-      // 1. Fill the background with white
-      ctx.fillStyle = 'white';
+      // 1. BASE COLOR: Creamy/Silk White
+      ctx.fillStyle = '#f8f7f2'; 
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      // We still clear the canvas area (effectively redrawing the white background)
-      // ctx.clearRect(0, 0, canvas.width, canvas.height); // (Optional: can remove this line since fillRect achieves the same effect)
 
-      ctx.lineWidth = 1.2;
+      // 2. LUXURY RADIAL GLOW (Subtle "Light" following mouse)
+      const glow = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 800);
+      glow.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+      glow.addColorStop(1, 'rgba(248, 247, 242, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      // 3. NOISE TEXTURE (The "Premium" Secret)
+      // Hum har frame pe halka random noise render karenge
+      for (let i = 0; i < 5000; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        ctx.fillStyle = 'rgba(0,0,0,0.015)'; // Super subtle grain
+        ctx.fillRect(x, y, 1, 1);
+      }
+
+      // 4. THE WAVES (Organic & Fluid)
       lines.forEach((line, idx) => {
         ctx.beginPath();
-        // 2. Keep the blue lines (HSLA ensures they are blue and slightly transparent)
-        ctx.strokeStyle = `hsla(${200 + idx * 2}, 80%, 60%, 0.25)`; 
+        ctx.lineWidth = 0.8;
+        
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+        gradient.addColorStop(0, 'rgba(0,0,0,0)');
+        gradient.addColorStop(0.5, `rgba(0,0,0,${0.03 + (idx * 0.005)})`);
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.strokeStyle = gradient;
 
-        for (let x = 0; x < canvas.width; x += 15) {
-          // Base sine wave
-          const wave = Math.sin((x + line.offset + time * line.speed) / 40) * line.amplitude;
+        for (let x = 0; x <= canvas.width; x += 10) {
+          const move = time * line.speed;
+          const noise = Math.sin(x * 0.002 + move + line.phase) * line.amplitude;
+          const finalY = line.y + noise;
 
-          // Mouse magnet effect
-          const distX = Math.abs(x - mouseX);
-          const magnet = Math.exp(-distX / 200) * ((mouseY / canvas.height) * 40);
-
-          const y = line.y + wave + magnet;
-
-          if (x === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
+          if (x === 0) ctx.moveTo(x, finalY);
+          else ctx.bezierCurveTo(x - 5, finalY, x - 5, finalY, x, finalY); // Curvy lines
         }
         ctx.stroke();
       });
 
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     }
-    const animationFrameId = requestAnimationFrame(animate);
 
+    animate(0);
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener('resize', setCanvasSize);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 z-0 pointer-events-none"
-    />
+    <>
+      <canvas
+        ref={canvasRef}
+        className="fixed inset-0 z-0 pointer-events-none"
+      />
+      {/* 5. CSS VIGNETTE OVERLAY */}
+      <div className="fixed inset-0 z-[1] pointer-events-none shadow-[inset_0_0_15vw_rgba(0,0,0,0.03)]" />
+    </>
   );
 };
 
